@@ -1,0 +1,46 @@
+{
+  "name": "visor-glocation",
+  "version": "1.0.0",
+  "description": "Visor de glocation",
+  "main": "app.js",
+  "scripts": {
+    "bundle": "webpack --config webpack.config.js",
+    "prestart": "npm run bundle",
+    "dev": "webpack --watch",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wilsonspitiam/visor-glocation.git"
+  },
+  "keywords": [
+    "visor",
+    "glocation"
+  ],
+  "author": "waespitiam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wilsonspitiam/visor-glocation/issues"
+  },
+  "homepage": "https://github.com/wilsonspitiam/visor-glocation#readme",
+  "dependencies": {
+    "@google-cloud/bigquery": "^4.6.1",
+    "express": "^4.17.1",
+    "google-auth-library": "^5.9.1",
+    "request": "^2.88.0",
+    "webpack": "^4.41.5"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-brands-svg-icons": "^5.12.0",
+    "@fortawesome/free-regular-svg-icons": "^5.12.0",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "copy-webpack-plugin": "^5.1.1",
+    "css-loader": "^3.4.2",
+    "file-loader": "^5.0.2",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  }
+}
