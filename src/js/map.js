@@ -43,6 +43,46 @@ export function init(lng, lat, zoom){
   map.data.addListener('click', function(e) {
     infowindow.open(map)
   })
+
+  loadCapa()
+
+}
+function loadCapa(){
+  //http://34.70.32.87:8080/geoserver/GLocation/wms?service=WMS&version=1.1.0&request=GetMap&layers=GLocation%3Apredios_neiva&bbox=-75.3120880126953%2C2.88615846633911%2C-75.2361373901367%2C2.98631620407104&width=582&height=768&srs=EPSG%3A4326&format=image%2Fpng
+  var getTileUrl = function(coord, zoom) {
+    var proj = map.getProjection();
+    var zfactor = Math.pow(2, zoom);
+    // get Long Lat coordinates
+    var top = proj.fromPointToLatLng(new google.maps.Point(coord.x * 256 / zfactor, coord.y * 256 / zfactor));
+    var bot = proj.fromPointToLatLng(new google.maps.Point((coord.x + 1) * 256 / zfactor, (coord.y + 1) * 256 / zfactor));
+    //corrections for the slight shift of the SLP (mapserver)
+    var deltaX = 0; //0.0013;
+    var deltaY = 0; //0.00058;
+    //create the Bounding box string
+    var bbox = (top.lng() + deltaX) + "," +
+        (bot.lat() + deltaY) + "," +
+        (bot.lng() + deltaX) + "," +
+        (top.lat() + deltaY);
+    return (
+      "http://34.70.32.87:8080/geoserver/GLocation/wms?" +
+      "&REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1" +
+      "&LAYERS=GLocation%3Apredios_neiva" +
+      "&FORMAT=image/png&TRANSPARENT=true" +
+      "&SRS=EPSG:4326&WIDTH=256&HEIGHT=256" +
+      "&STYLES=terrenos" +
+      "&BBOX=" + bbox
+    );
+  };
+
+  var landcover = new google.maps.ImageMapType({
+    getTileUrl: getTileUrl,
+    name: "Landcover",
+    alt: "National Land Cover Database 2016",
+    minZoom: 0,
+    maxZoom: 19,
+    opacity: 1.0
+  });
+  map.overlayMapTypes.push(landcover);
 }
 
 export function drawPolygon(json){

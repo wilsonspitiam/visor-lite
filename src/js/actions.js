@@ -55,13 +55,19 @@ export function init() {
 }
 
 export function transformPoly(polygon){
-    const isMultiPoly = /\{(\{[-]?[0-9]+[.][0-9]+\,[-]?[0-9]+[.][0-9]+\}[,]?)+\}/gmi;
-    const numberPolygons = /(\{[-]?[0-9]+[.][0-9]+\,[-]?[0-9]+[.][0-9]+\})/gmi;
-    const numberPoints = /(\{[-]?[0-9]+[.][0-9]+\,[-]?[0-9]+[.][0-9]+\})/gmi;
+    console.log(polygon)
+    const isMultiPoly = /\(\(\(.*\)\)\)/gmi;
+    const numberPolygons = /\(\(.*\)\)/gmi;
+    const numberPoints = /(([-]?[0-9]+[.])?[0-9]+\s([-]?[0-9]+[.])?[0-9]+)/gmi;
+
+    // const isMultiPoly = /\{(\{[-]?[0-9]+[.][0-9]+\,[-]?[0-9]+[.][0-9]+\}[,]?)+\}/gmi;
+    // const numberPolygons = /(\{[-]?[0-9]+[.][0-9]+\,[-]?[0-9]+[.][0-9]+\})/gmi;
+    // const numberPoints = /(\{[-]?[0-9]+[.][0-9]+\,[-]?[0-9]+[.][0-9]+\})/gmi;
 
     let m;
     let countMultiPoly = 0
     let arrayPolygons = []
+    let arrayPolys = []
     let arrayCoordinates = []
     while ((m = isMultiPoly.exec(polygon)) !== null) {
         if (m.index === isMultiPoly.lastIndex) {
@@ -70,6 +76,8 @@ export function transformPoly(polygon){
         countMultiPoly++;
         arrayPolygons.push(m["0"])
     }
+    console.log(countMultiPoly)
+    console.log(arrayPolygons)
     if(countMultiPoly > 1){
         // console.log('Es un multipoligono', arrayPolygons);
         for(let a = 0; a < arrayPolygons.length; a++){
@@ -82,7 +90,7 @@ export function transformPoly(polygon){
                 }
                 countPoly++;
                 arrayCoordinates.push(m["0"])
-            }
+            }            
             if(countPoly == 1){
                 loadFigure(arrayCoordinates, schemaPoint, "Point")
             }
@@ -98,15 +106,29 @@ export function transformPoly(polygon){
     }
     else{
         let countPoly = 0
+        let countPoints = 0
         while ((m = numberPolygons.exec(polygon)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === numberPolygons.lastIndex) {
                 numberPolygons.lastIndex++;
             }
             countPoly++;
+            arrayPolys.push(m["0"])
+        }
+        while ((m = numberPoints.exec(polygon)) !== null) {
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (m.index === numberPoints.lastIndex) {
+                numberPoints.lastIndex++;
+            }
+            countPoints++;
             arrayCoordinates.push(m["0"])
         }
-        if(countPoly == 1){
+        console.log(countPoly)
+        console.log(arrayPolys)
+
+        console.log(countPoints)
+        console.log(arrayCoordinates)
+        if(countPoints == 1){
             loadFigure(arrayCoordinates, schemaPoint, "Point")
         }
         else{
@@ -122,7 +144,7 @@ export function transformPoly(polygon){
 
 function loadFigure(arrayCoordinates, schema, type){
     arrayCoordinates.forEach((element, index, array) => {
-        array[index] = element.replace(/\{/gi,'').replace(/\}/gi,'').split(",")
+        array[index] = element.replace(/\(/gi,'').replace(/\(/gi,'').split(" ")
     });
 
     arrayCoordinates.forEach((element, index, array) => {
